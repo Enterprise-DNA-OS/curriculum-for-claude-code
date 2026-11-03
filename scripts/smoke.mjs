@@ -61,6 +61,7 @@ try{
  await call('submit',{version:v.id,evidence:'Revised committee pack',actor});
  const approved=await call('decide',{version:v.id,decision:'approved',evidence:'Minute 18, internal approval only',actor:'Mira'});
  eq(approved.snapshot.modules[0].title,'Applied Evaluation Revised');eq((await call('version',{version:v.id})).version.state,'approved');
+ ok((await call('version',{version:v.id})).reviews.some(r=>r.decision==='submitted'&&r.snapshot.modules[0].title==='Applied Evaluation'));
  await reject(()=>call('edit-module',{version:v.id,module:m.id,title:'Corrupt',actor}),/not draft/);
  await reject(()=>db.query('UPDATE versions SET title=$2 WHERE id=$1',[v.id,'Corrupt']),/immutable/);
  await reject(()=>db.query('UPDATE reviews SET evidence=$2 WHERE id=$1',[approved.id,'Forged']),/append-only/);

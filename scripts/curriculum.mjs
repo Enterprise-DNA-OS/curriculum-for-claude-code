@@ -145,7 +145,10 @@ async function execute(db,c,o){
   const cols=c==='modules'?'code,title,level,credits,hours,aim,delivery':c==='outcomes'?'code,description,module_id':'code,title,method,weight,criteria,module_id';
   return db.query(`SELECT ${cols} FROM ${c} WHERE version_id=$1 ORDER BY code`,[v.id]);
  }
- if(c==='version')return snapshot(db,(await version(db,req(o,'version'))).id);
+ if(c==='version'){
+  const v=await version(db,req(o,'version'));
+  return {...await snapshot(db,v.id),reviews:await db.query('SELECT * FROM reviews WHERE version_id=$1 ORDER BY created_at,id',[v.id])};
+ }
  if(c==='import')return importAkari(db,o);
  if(c==='export'){
   const records={};for(const t of ['programmes','versions','modules','outcomes','assessments','alignments','assessment_outcomes','tasks','reviews','imports','import_rows','activity','schema_migrations'])records[t]=await db.query(`SELECT * FROM ${t}`);
