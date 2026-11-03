@@ -1,0 +1,42 @@
+[
+  {
+    "question": "Which programme versions are due for review this week, and who owns each one?",
+    "command": "reviews-due"
+  },
+  {
+    "question": "Which draft curricula have gone quiet for more than fourteen days?",
+    "command": "quiet-drafts"
+  },
+  {
+    "question": "Where do compulsory module credits fall short of the programme total?",
+    "command": "credit-check"
+  },
+  {
+    "question": "Which learning outcomes lack a link to a programme outcome?",
+    "command": "mapping-gaps"
+  },
+  {
+    "question": "Which module outcomes have no assessment evidence mapped?",
+    "command": "mapping-gaps"
+  },
+  {
+    "question": "Which programme outcomes have no contributing module outcomes?",
+    "command": "compliance"
+  },
+  {
+    "question": "Which New Zealand modules have learning hours inconsistent with their credits?",
+    "command": "compliance"
+  },
+  {
+    "question": "Which review actions are overdue, and who must resolve them?",
+    "command": "overdue"
+  },
+  {
+    "question": "Who recorded each internal review decision, with what evidence?",
+    "command": "approvals"
+  },
+  {
+    "question": "What exactly did the submitted curriculum contain before later revisions?",
+    "command": "version --version=<reference>"
+  }
+]

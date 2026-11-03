@@ -1,13 +1,41 @@
 [
   {
     "name": "week",
-    "title": "This week",
-    "subtitle": "Curriculum for Claude Code: what needs attention, rendered by npm run view",
+    "title": "Curriculum review week",
+    "subtitle": "Internal review work, not accreditation decisions",
     "sections": [
       {
-        "title": "Needs attention",
-        "note": "TODO(author): point this at the industry's attention view (overdue, stuck, quiet).",
-        "sql": "select 'replace me' as item, 'TODO(author)' as why"
+        "title": "Review queue",
+        "sql": "SELECT * FROM review_queue ORDER BY review_due,reference"
+      },
+      {
+        "title": "Unresolved actions",
+        "sql": "SELECT v.reference,t.owner,t.note,t.due FROM tasks t JOIN version_register v ON v.id=t.version_id WHERE closed_at IS NULL ORDER BY due"
+      }
+    ]
+  },
+  {
+    "name": "coverage",
+    "title": "Outcome and assessment coverage",
+    "sections": [
+      {
+        "title": "Learning outcome coverage",
+        "sql": "SELECT reference,module,code,description,programme_links,assessments FROM mapping_coverage ORDER BY reference,code"
+      },
+      {
+        "title": "Programme totals",
+        "sql": "SELECT reference,credits,module_credits,state FROM version_register ORDER BY reference"
+      }
+    ]
+  },
+  {
+    "name": "findings",
+    "title": "Curriculum evidence review",
+    "sections": [
+      {
+        "title": "Records to review",
+        "note": "Checks cover selected NZQA record requirements and local demo policy only. Academic reviewers assess the substance.",
+        "sql": "SELECT reference,rule,finding FROM curriculum_findings ORDER BY reference,rule,finding"
       }
     ]
   }

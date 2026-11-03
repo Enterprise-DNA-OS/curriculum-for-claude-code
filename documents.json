@@ -1,11 +1,69 @@
 [
   {
-    "name": "example",
-    "title": "TODO(author): the first document this industry must produce",
-    "for_each": "select gen_random_uuid() as id, 'Example' as name",
-    "file": "name",
+    "for_each": "SELECT id,reference FROM version_register ORDER BY reference",
+    "file": "reference",
+    "name": "programme-specification",
+    "title": "Programme specification working record",
     "sections": [
-      { "title": "Details", "sql": "select 'replace me' as item, $1::text as record_id" }
+      {
+        "title": "Programme version",
+        "layout": "record",
+        "sql": "SELECT reference,title,owner,jurisdiction,level,credits,state,effective_date FROM version_register WHERE id=$1"
+      },
+      {
+        "title": "Modules",
+        "sql": "SELECT code,title,level,credits,hours,aim,content,delivery FROM modules WHERE version_id=$1 ORDER BY code"
+      },
+      {
+        "title": "Programme outcomes",
+        "sql": "SELECT code,description FROM outcomes WHERE version_id=$1 AND module_id IS NULL ORDER BY code"
+      },
+      {
+        "title": "Assessment plan",
+        "sql": "SELECT m.code AS module,a.code,a.title,a.method,a.criteria,a.weight FROM assessments a JOIN modules m ON m.id=a.module_id WHERE a.version_id=$1 ORDER BY m.code,a.code"
+      }
+    ]
+  },
+  {
+    "for_each": "SELECT id,reference FROM version_register ORDER BY reference",
+    "file": "reference",
+    "name": "mapping-matrix",
+    "title": "Learning outcome mapping matrix",
+    "sections": [
+      {
+        "title": "Outcome alignment",
+        "sql": "SELECT m.code AS module,lo.code AS learning_outcome,lo.description,po.code AS programme_outcome,a.evidence FROM outcomes lo JOIN modules m ON m.id=lo.module_id LEFT JOIN alignments a ON a.learning_outcome_id=lo.id LEFT JOIN outcomes po ON po.id=a.programme_outcome_id WHERE lo.version_id=$1 ORDER BY m.code,lo.code,po.code"
+      },
+      {
+        "title": "Assessment coverage",
+        "sql": "SELECT o.code AS learning_outcome,a.code AS assessment,a.method,a.criteria FROM outcomes o LEFT JOIN assessment_outcomes ao ON ao.outcome_id=o.id LEFT JOIN assessments a ON a.id=ao.assessment_id WHERE o.version_id=$1 AND o.module_id IS NOT NULL ORDER BY o.code,a.code"
+      }
+    ]
+  },
+  {
+    "for_each": "SELECT id,reference FROM version_register ORDER BY reference",
+    "file": "reference",
+    "name": "committee-pack",
+    "title": "Academic review committee working pack",
+    "sections": [
+      {
+        "title": "Version summary",
+        "layout": "record",
+        "sql": "SELECT reference,title,state,review_due,effective_date,credits,module_credits,open_tasks FROM version_register WHERE id=$1"
+      },
+      {
+        "title": "Record checks",
+        "note": "A clean report does not mean regulatory approval. Review the curriculum substance and external evidence.",
+        "sql": "SELECT rule,finding FROM curriculum_findings WHERE version_id=$1 ORDER BY rule,finding"
+      },
+      {
+        "title": "Actions",
+        "sql": "SELECT owner,note,due,resolution,closed_at FROM tasks WHERE version_id=$1 ORDER BY due"
+      },
+      {
+        "title": "Recorded internal decisions",
+        "sql": "SELECT actor,decision,evidence,created_at FROM reviews WHERE version_id=$1 ORDER BY created_at"
+      }
     ]
   }
 ]
